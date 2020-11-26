@@ -14,7 +14,7 @@ namespace CoreApp.Data
 
         Product Add(Product product);
 
-        Product Delete(int id);
+        void Delete(int id);
 
         Product Update(Product productChanges);
     }

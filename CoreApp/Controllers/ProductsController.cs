@@ -24,34 +24,46 @@ namespace CoreApp.Controllers
         public ActionResult<IEnumerable<Product>> GetAll()
         {
             var products = _repository.GetAll();
-            return Ok(products);
+            if (products != null)
+            {
+                return Ok(products);
+            }
+
+            return BadRequest("Product not found");
         }
 
         [HttpGet("{id}")]
         public ActionResult <Product> GetById(int id)
         {
             var products = _repository.GetById(id);
-            return Ok(products);
+
+            if (products != null)
+            {
+                return Ok(products);
+            }
+
+            return BadRequest("Product not found");
         }
 
         [HttpPost]
         public ActionResult<Product> Add(Product product)
         {
             var products = _repository.Add(product);
-            return Ok();
+            return Ok("Successfully Added a new Product");
         }
 
         [HttpDelete("{id}")]
         public ActionResult<Product> Delete(int id)
         {
             Product product = _repository.GetById(id);
-            if (product == null)
-            {
-                return BadRequest("Product not found");
+
+            if (product != null)
+            {                
+                _repository.Delete(product.Id);
+                return Ok("Product Deleted successfully");
             }
 
-            _repository.Delete(product.Id);
-            return NoContent();
+            return BadRequest("Product not found");
         }
 
         [HttpPut]
@@ -59,7 +71,7 @@ namespace CoreApp.Controllers
         {
             var productItems = _repository.Update(productChanges);
 
-            return Ok();
+            return Ok("Product: " + productItems.PCode + " successfully updated.");
         }
     }
 }
