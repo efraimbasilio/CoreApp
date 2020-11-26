@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoreApp.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20201126182554_intital_create")]
-    partial class intital_create
+    [Migration("20201126183854_spDelete")]
+    partial class spDelete
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
