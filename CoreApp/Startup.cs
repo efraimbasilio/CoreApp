@@ -27,6 +27,7 @@ namespace CoreApp
             services.AddDbContext<AppDBContext>(options => options.UseSqlServer(Configuration["ConnectionStrings"]));
 
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddControllers();
         }
 
