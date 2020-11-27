@@ -12,7 +12,7 @@ namespace CoreApp.Migrations
                                     @Email nvarchar(MAX)
                                 as
                                 BEGIN
-                                    INSERT INTO Products(Username, Passwprd, Email)	                                
+                                    INSERT INTO Users(Username, Password, Email)	                                
 	                                VALUES (@Username, @Password, @Email)	
                                 END";
             migrationBuilder.Sql(procedure);
