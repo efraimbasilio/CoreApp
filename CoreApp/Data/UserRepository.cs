@@ -1,5 +1,6 @@
 ﻿using CoreApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,11 @@ namespace CoreApp.Data
 
         public User Add([FromBody]User user)
         {
-            throw new NotImplementedException();
+            _context.Database.ExecuteSqlRaw("spUserInsert {0},{1},{2}",
+                                user.Username,
+                                user.Password,
+                                user.Email);
+            return user;
         }
 
         public void Delete(int id)

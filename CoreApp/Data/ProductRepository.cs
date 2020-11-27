@@ -20,8 +20,10 @@ namespace CoreApp.Data
 
         public Product Add([FromBody] Product product)
         {
-            _context.Database.ExecuteSqlRaw ("spInsert {0},{1},{2}", product.PCode, product.Description, product.Category);
-
+            _context.Database.ExecuteSqlRaw ("spInsert {0},{1},{2}", 
+                                product.PCode, 
+                                product.Description, 
+                                product.Category);
             return product;
         }
 
