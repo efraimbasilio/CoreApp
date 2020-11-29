@@ -11,11 +11,14 @@ namespace CoreApp.Data
         IEnumerable<Product> GetAll();
 
         Product GetById(int id);
-
+       
+        
         Product Add(Product product);
 
         void Delete(int id);
 
         Product Update(Product productChanges);
+
+
     }
 }

@@ -17,5 +17,7 @@ namespace CoreApp.Data
         void Delete(int id);
 
         User Update(User useChanges);
+
+        User GetUnhassedPassword(User user);
     }
 }
