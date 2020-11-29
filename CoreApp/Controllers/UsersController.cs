@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CoreApp.Data;
 using CoreApp.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualBasic;
 
 namespace CoreApp.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
+    
     public class UsersController : ControllerBase
     {
         private readonly IUserRepository _repository;
@@ -54,6 +61,7 @@ namespace CoreApp.Controllers
             return Ok("Successfully Added a new user");
         }
 
+
         [HttpDelete("{id}")]
         public ActionResult<User> Delete(int id)
         {
@@ -76,43 +84,47 @@ namespace CoreApp.Controllers
             return Ok("User: " + userItems.Username + " successfully updated.");
         }
 
-        [HttpPost("GetHash")]
+        [HttpPost("Login")]
         public ActionResult<User> GetHashed(User user)
         {
-            var users = _repository.GetUnhassedPassword(user);
+            var users = _repository.Login(user);
 
             if (users != null)
-            {
-               
-                //return Ok(ConvertToDecrypt(users.Password));
-                return Ok("Welcome " + users.Username);
-
+            {                        
+                var tokenStr = GenerateJWTToken(user);
+                return Ok(new { token = tokenStr });
+                
             }
 
             return BadRequest("User not found");
 
         }
 
-        public static string Key = "sdasd@@@dsasd@";
-
-        public static string ConvertToEncrypt(string password)
+        private string GenerateJWTToken(User use)
         {
-            if (string.IsNullOrEmpty(password)) return "";
+            var claims = new[]
+           {
+                new Claim(JwtRegisteredClaimNames.Sub,use.Username),
+                new Claim(JwtRegisteredClaimNames.Email,use.Email),
+                new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString())
+            };
 
-            password += Key;
-            var passwordBytes = Encoding.UTF8.GetBytes(password);
-            return Convert.ToBase64String(passwordBytes);
+            var secretBytes = Encoding.UTF8.GetBytes(Constants.Secrets);
+            var key = new SymmetricSecurityKey(secretBytes);
+            var algorithm = SecurityAlgorithms.HmacSha256;
+            var signingCredentials = new SigningCredentials(key, algorithm);
+
+            var token = new JwtSecurityToken(
+                Constants.Issuer,
+                Constants.Audience,
+                claims,
+                notBefore: DateTime.Now,
+                expires: DateTime.Now.AddHours(1),
+                signingCredentials);
+
+            var tokenJson = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return tokenJson;
         }
-
-        public static string ConvertToDecrypt(string base64EncodeData)
-        {
-            if (string.IsNullOrEmpty(base64EncodeData)) return "";
-
-            var base64EncodeBytes = Convert.FromBase64String(base64EncodeData);
-            var result = Encoding.UTF8.GetString(base64EncodeBytes);
-            result = result.Substring(0, result.Length - Key.Length);
-            return result;
-        }
-
     }
 }

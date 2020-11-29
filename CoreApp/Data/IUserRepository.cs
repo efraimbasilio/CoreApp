@@ -18,6 +18,8 @@ namespace CoreApp.Data
 
         User Update(User useChanges);
 
-        User GetUnhassedPassword(User user);
+        
+
+        User Login(User user);
     }
 }

@@ -48,13 +48,14 @@ namespace CoreApp.Data
                             .FromSqlRaw<User>("spUserGetById @Id", parameter)
                             .ToList()
                             .FirstOrDefault();
-        }
-        public User GetUnhassedPassword([FromBody] User user)
-        {
-            var pass = ConvertToEncrypt(user.Password,user.Username);
+        }       
 
+        public User Login([FromBody] User user)
+        {
+            var pass = ConvertToEncrypt(user.Password, user.Username);
             user = _context.Users.Where(u => u.Username == user.Username && u.Password == pass).FirstOrDefault();
-            return user; 
+                        
+            return user;
 
         }
 
@@ -69,6 +70,11 @@ namespace CoreApp.Data
         }
 
        
+
+
+
+
+
         public static string Key = "sdasd@@@dsasd@";
 
         public static string ConvertToEncrypt(string password,string username)
